@@ -17,7 +17,7 @@ const Test = () => {
 
     const fetchData = async () => {
         setDisableButton(true)
-        const response = await axios.get("https://randomuser.me/api")
+        const response = await axios.get(`${process.env.REACT_APP_BASE_URL}`)
         if (response?.status === 200) {
             
             localStorage.setItem("apiData", JSON.stringify(response?.data?.results))
