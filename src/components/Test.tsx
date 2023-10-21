@@ -13,24 +13,32 @@ interface Names {
 const Test = () => {
     const [apiData, setApiData] = useState([]);
     const storedData = localStorage.getItem("apiData");
-    const[disableButton,setDisableButton]=useState(false)
+    const [disableButton, setDisableButton] = useState(false);
+    const [tempVar,setTempVar]=useState(1)
 
     const fetchData = async () => {
+        
         setDisableButton(true)
         const response = await axios.get(`${process.env.REACT_APP_BASE_URL}`)
         if (response?.status === 200) {
-            
+            setTempVar(0)
             localStorage.setItem("apiData", JSON.stringify(response?.data?.results))
             refreshFun()
+            setTimeout(() => {
+                setTempVar(1)
+              }, 4);
         }
     }
 
     const refreshFun = () => {
         if (storedData) {
+            
   try {
       const parsedData = JSON.parse(storedData);
       setApiData(parsedData);
+      
       setDisableButton(false)
+ 
      
   } catch (error) {
     console.error("Error parsing JSON:", error);
@@ -41,13 +49,20 @@ const Test = () => {
     }
     
     useEffect(() => {
-        fetchData()
+        // if (!storedData) {
+            fetchData()
+        // }
     }, [])
+
+    useEffect(() => {
+        
+        refreshFun()
+    },[storedData?.length])
 
     return (
         <div className="user-info-container">
            
-            {apiData?.map((item: Names, index) => {
+            {tempVar>0&&apiData?.map((item: Names, index) => {
                 
                 return (
                     <div>
@@ -58,7 +73,7 @@ const Test = () => {
                     </div>
                 )
             })}
-     <button className="user-info-button"disabled={disableButton} onClick={()=>fetchData()}>Refresh</button>
+            <button className="user-info-button" disabled={disableButton} onClick={() => { debugger; fetchData()}}>Refresh</button>
       </div>
     );
 }
